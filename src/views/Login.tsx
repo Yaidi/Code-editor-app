@@ -1,10 +1,31 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useState, useContext } from 'react';
+import { GoogleLogin } from 'react-google-login';
+import { useHistory } from 'react-router-dom';
+import AuthContext from '../router/AuthContext';
+import Styles from '../Styles/Login.module.css';
 
 const Login = (): ReactElement => {
+  const [failure, setFailure] = useState('');
+  const { setUser } = useContext(AuthContext);
+  const history = useHistory();
+
+  const authGoogle = (response: any): any | ReactElement => {
+    history.push('/Editor');
+    setUser(response);
+  };
+  const fail = () => {
+    setFailure(`You couldn't Login, please try again`);
+  };
   return (
-    <button type="button" className=".button-google">
-      Login with Google
-    </button>
+    <div className={Styles.centerButton}>
+      <p>{failure}</p>
+      <GoogleLogin
+        clientId={process.env.REACT_APP_CLIENT_ID as string}
+        onSuccess={authGoogle}
+        onFailure={fail}
+        cookiePolicy="single_host_origin"
+      />
+    </div>
   );
 };
 export default Login;
